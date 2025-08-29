@@ -1,12 +1,10 @@
 {
   "name": "bfhl-api",
   "version": "1.0.0",
-  "description": "VIT Full Stack Question - /bfhl API",
-  "main": "server.js",
   "type": "module",
+  "main": "server.js",
   "scripts": {
-    "start": "node server.js",
-    "dev": "node server.js"
+    "start": "node server.js"
   },
   "dependencies": {
     "express": "^4.19.2",
