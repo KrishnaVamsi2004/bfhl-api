@@ -9,28 +9,20 @@ app.use(morgan("tiny"));
 
 /**
  * -----------------------------
- * CONFIG: edit these 3 fields
+ * CONFIG: your details
  * -----------------------------
- * fullName must be lowercase in user_id
- * user_id format: full_name_ddmmyyyy
  */
-const FULL_NAME = "john_doe";        // <-- change to your lowercase full name, e.g., "krishna_vamsi_bommireddy"
-const DOB_DDMMYYYY = "17091999";     // <-- change to your DOB in ddmmyyyy
-const EMAIL = "john@xyz.com";        // <-- change to your email
-const ROLL_NUMBER = "ABCD123";       // <-- change to your roll number
+const FULL_NAME = "krishna_vamsi_bommireddy";   // lowercase with underscores
+const DOB_DDMMYYYY = "08092004";                // ddmmyyyy
+const EMAIL = "krishnavamsi@gmail.com";
+const ROLL_NUMBER = "22BCE3041";
 
 // Helpers
 const isPureIntegerString = (s) => /^\d+$/.test(s);
 const isPureAlphaString = (s) => /^[A-Za-z]+$/.test(s);
 const extractLetters = (s) => (s.match(/[A-Za-z]/g) || []).join("");
 
-/**
- * Alternating caps after reversing the whole letters string.
- * Steps:
- * 1) gather all alphabetical characters from entire input (anywhere)
- * 2) reverse the whole string
- * 3) apply alternating caps across the whole reversed string (Upper, lower, Upper, ...)
- */
+// Alternating caps reverse concat
 function buildAlternatingCapsReverseConcat(allLetters) {
   const reversed = allLetters.split("").reverse().join("");
   let out = "";
@@ -41,6 +33,7 @@ function buildAlternatingCapsReverseConcat(allLetters) {
   return out;
 }
 
+// POST /bfhl
 app.post("/bfhl", (req, res) => {
   try {
     const body = req.body ?? {};
@@ -65,19 +58,16 @@ app.post("/bfhl", (req, res) => {
     const even_numbers = [];
     const alphabets = [];
     const special_characters = [];
-
     let numericSum = 0;
     let allLettersCollected = "";
 
     for (const item of data) {
-      // Normalize every element to string for uniform processing
       const s = String(item);
 
-      // For concat_string, collect letters from ALL items (even if mixed)
+      // Collect letters for concat_string
       allLettersCollected += extractLetters(s);
 
       if (isPureIntegerString(s)) {
-        // numbers must be returned as strings
         const num = parseInt(s, 10);
         numericSum += num;
         if (num % 2 === 0) {
@@ -86,15 +76,14 @@ app.post("/bfhl", (req, res) => {
           odd_numbers.push(s);
         }
       } else if (isPureAlphaString(s)) {
-        // pure alphabets -> return uppercase token
         alphabets.push(s.toUpperCase());
       } else {
-        // anything else (mixed, symbols, etc.) -> special characters
         special_characters.push(s);
       }
     }
 
     const concat_string = buildAlternatingCapsReverseConcat(allLettersCollected);
+
     const response = {
       is_success: true,
       user_id: `${FULL_NAME}_${DOB_DDMMYYYY}`,
@@ -110,8 +99,7 @@ app.post("/bfhl", (req, res) => {
 
     return res.status(200).json(response);
   } catch (err) {
-    // Graceful error handling
-    const response = {
+    return res.status(200).json({
       is_success: false,
       user_id: `${FULL_NAME}_${DOB_DDMMYYYY}`,
       email: EMAIL,
@@ -122,12 +110,11 @@ app.post("/bfhl", (req, res) => {
       special_characters: [],
       sum: "0",
       concat_string: ""
-    };
-    return res.status(200).json(response);
+    });
   }
 });
 
-// Health check / root info (not required, but handy for testing)
+// Health check route
 app.get("/", (_req, res) => {
   res.status(200).json({
     message: "BFHL API running. Use POST /bfhl",
@@ -143,4 +130,4 @@ app.listen(PORT, () => {
   console.log(`BFHL API listening on port ${PORT}`);
 });
 
-export default app; // for vercel
+export default app; // required for Vercel
