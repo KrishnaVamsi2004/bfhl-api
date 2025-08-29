@@ -18,5 +18,8 @@
   "bugs": {
     "url": "https://github.com/KrishnaVamsi2004/bfhl-api/issues"
   },
-  "homepage": "https://github.com/KrishnaVamsi2004/bfhl-api#readme"
+  "homepage": "https://github.com/KrishnaVamsi2004/bfhl-api#readme",
+  "dependencies": {
+    "express": "^5.1.0"
+  }
 }
